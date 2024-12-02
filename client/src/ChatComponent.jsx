@@ -1,6 +1,7 @@
+// ChatComponent.jsx
 import { useState } from "react";
-import axios from "axios";
 import { Container, Card, Form, Button, Spinner } from "react-bootstrap";
+import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const ChatComponent = () => {
@@ -13,32 +14,18 @@ const ChatComponent = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(
-        "https://api.openai.com/v1/chat/completions",
-        {
-          model: "gpt-4o-mini",
-          messages: [{ role: "user", content: input }],
-          temperature: 0.7,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.post("http://localhost:5001/api/chat", {
+        message: input,
+      });
 
       setMessages((prev) => [
         ...prev,
         { role: "user", content: input },
-        {
-          role: "assistant",
-          content: response.data.choices[0].message.content,
-        },
+        { role: "assistant", content: response.data.data },
       ]);
       setInput("");
     } catch (error) {
-      console.error("Error:", error.response?.data || error.message);
+      console.error("Error:", error);
       alert("Error occurred while fetching response");
     } finally {
       setLoading(false);
